@@ -1,0 +1,125 @@
+<!-- TAREA 3: Programa de un Login que devuelve el horario del alumno en múltiples páginas --->
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+        <!-- 3 líneas necesarias para el uso de OnsenUI --->
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+        <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+
+
+        <title></title>
+    </head>
+
+    <body>
+
+      <script type="text/javascript" src="cordova.js"></script>
+      <script>
+	  
+	  document.addEventListener('init', function(event) {
+	  var page = event.target;
+
+	  if (page.id === 'page1') {
+		page.querySelector('#push-button').onclick = function() {
+			enviar();
+		  document.querySelector('#myNavigator').pushPage('page2.html', {data: {title: 'Page 2'}});
+		  
+		};
+	  } else if (page.id === 'page2') {
+		page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+	  }
+	});
+	  
+	    function enviar()
+          {
+            var codigo = document.getElementById("codigo").value;
+            var nip  = document.getElementById("pass").value;
+            // declarando y obteniendo variables de los input
+
+            // mandando datos al servidor
+            var xhttp = new XMLHttpRequest();
+
+			
+            xhttp.onreadystatechange = function()
+			
+            {
+              if(this.readyState == 4 && this.status == 200)
+              {
+                
+				  
+				  obj = JSON.parse(xhttp.responseText);
+				  console.log(obj);
+
+				  
+				  
+               
+
+
+              }
+            };
+            xhttp.open("GET","https://dcc.000webhostapp.com/2019B/horario.php?codigo="+codigo+"&nip="+nip,true);
+			xhttp.send();
+          }
+	  
+      </script>
+
+        <center>
+        <ons-page>
+
+          <ons-navigator swipeable id="myNavigator" page="page1.html"></ons-navigator>
+          <template id="page1.html">
+            <ons-page id="page1">
+              <ons-toolbar>
+                <div class="center">Iniciar sesión</div>
+              </ons-toolbar>
+			  
+			   <center>
+              <h1> Horario UDG <h1>
+                <h2> Ingresa los siguientes datos necesarios para poder entrar </h2>
+
+                <br> <br> <br>
+
+                <ons-input input-id="codigo" type="text" placeholder="Código" modifier="underbar"> </ons-input> <br> <br> <!-- apellidos -->
+                <ons-input input-id="pass" type="password" placeholder="NIP" modifier="underbar"> </ons-input> <br> <br> <!-- nombres -->
+                 <br> <br>
+				 
+                <ons-button id="push-button"> ENVIAR </ons-button>
+
+
+                <br> <br>
+                <label id="lcodigo"> CÓDIGO: </label>
+                <br> <br>
+                <label id="lnombre"> NOMBRE: </label>
+                <br> <br>
+                <label id="campus"> CAMPUS: </label>
+                <br> <br>
+                <label id="carrera"> CARRERA: </label>
+            </center>
+
+          </ons-page>    
+          </template>
+
+          <template id="page2.html">
+            <ons-page id="page2">
+              <ons-toolbar>
+                <div class="left"><ons-back-button>Iniciar sesión</ons-back-button></div>
+                <div class="center">Tus datos</div>
+              </ons-toolbar>
+
+				<ons-button onclick="dias()"> LUNES </ons-button>
+		   <ons-button onclick="dias()"> MARTES </ons-button>
+		   <ons-button onclick="dias()"> MIERCOLES </ons-button>
+		   <ons-button onclick="dias()"> JUEVES </ons-button>
+		   <ons-button onclick="dias()"> VIERNES </ons-button>
+		   <ons-button onclick="dias()"> SABADO </ons-button>
+
+            </ons-page>
+          </template>
+        </center>
+    </body>
+
+</html>
