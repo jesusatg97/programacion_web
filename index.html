@@ -1,8 +1,11 @@
+  
 <!-- TAREA 3: Programa de un Login que devuelve el horario del alumno en múltiples páginas --->
 <!DOCTYPE html>
 <html>
 
 <head>
+
+
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
@@ -10,31 +13,45 @@
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
   <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
   <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
-  <script type="text/javascript" src="cordova.js"></script> esta línea no la necesitas (todavía)
+  <!-- <script type="text/javascript" src="cordova.js"></script> esta línea no la necesitas (todavía)-->
   <!-- La parte del script que empleas para las peticiones lo cargo de la siguiente direccion en src -->
   <script type="text/javascript" src="js/index.js"></script>
   <style>
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-    td,
-    th {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
+    table{
+	
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%
+	}
+	td,
+	th{
+	 
+	 border: 1px solid #dddddd;
+	 text-align: left;
+	 padding: 8px;
+	
+	
+	
+	}
+	tr:ntd-child(even)
+	{
+	    background-color: #dddddd;
+	}
+  
+  
+  
   </style>
   <title>Horario UDG</title>
+  
+  
+  
+
+  
 </head>
 
 <body>
 
+     
   <center>
     <ons-page>
 
@@ -101,42 +118,52 @@
               Horario
             </div>
             <form id="form2" name="form2" style="text-align:center;margin-top:10px; padding: 2px">
-              <!-- Si vas a hacer uso de una función "dias()" te recomiendo que esa funcion lo que haga
-              sea crear un elemento tabla o algo por el estilo en una nueva página y que cargue en esa tabla
-              los elementos de la variable scheduleData del dia correspondiente -->
-              <ons-button onclick="dias('L')" class="login-button button--large button" id="dayButton"> LUNES
-              </ons-button>
-              <ons-button onclick="dias('M')" class="login-button button--large button"> MARTES </ons-button>
-              <ons-button onclick="dias('I')" class="login-button button--large button"> MIERCOLES </ons-button>
-              <ons-button onclick="dias('J')" class="login-button button--large button"> JUEVES </ons-button>
-              <ons-button onclick="dias('V')" class="login-button button--large button"> VIERNES </ons-button>
-              <ons-button onclick="dias('S')" class="login-button button--large button"> SABADO </ons-button>
+		
+
+
+
+              <ons-button onclick="dias('L')" class="login-button button--large button" id="dayButton"> LUNES </ons-button>
+              <ons-button onclick="dias('M')" class="login-button button--large button" id="dayButton"> MARTES </ons-button>
+              <ons-button onclick="dias('I')" class="login-button button--large button" id="dayButton"> MIERCOLES </ons-button>
+              <ons-button onclick="dias('J')" class="login-button button--large button" id="dayButton"> JUEVES </ons-button>
+              <ons-button onclick="dias('v')" class="login-button button--large button" id="dayButton"> VIERNES </ons-button>
+              <ons-button onclick="dias('S')" class="login-button button--large button" id="dayButton"> SABADO </ons-button>
             </form>
           </ons-card>
         </ons-page>
       </template>
-
-      <template id="page3.html">
-        <ons-page id="page3">
-          <table id="horario" style="width:100%">
-            <tr>
-              <td>Fecha Fin</td>
-              <td>Fecha Inicio</td>
-              <td>Profesor</td>
-              <td>Aula</td>
-              <td>Edificio</td>
-              <td>Dias</td>
-              <td>Horario</td>
-              <td>Creditos</td>
-              <td>Seccion</td>
-              <td>Materia</td>
-              <td>Clave</td>
-              <td>CRN</td>
-            </tr>
-          </table>
-        </ons-page>
-      </template>
+	  
+	  
+	  <template id="page3.html">
+	  <ons-page id="page3">
+	  
+	  <table id="horario" style="width:100%">
+	  <tr>
+	  <td>Fecha Fin</td>
+      <td>Fecha Incio</td>
+      <td>Profesor</td>
+      <td>Aula</td>
+      <td>Edicio</td>
+      <td>Dias</td>
+      <td>Horario</td>
+      <td>Creditos</td>
+      <td>Seccion</td>
+      <td>Materia</td>
+      <td>Clave</td>
+      <td>CRN</td>
+      </tr>
+      </ons-page>	 
+     
+    </template>	 
+	  
+	  
+	  
+	  
+	  
+	  
   </center>
 </body>
 
 </html>
+
+
