@@ -104,3 +104,62 @@ function enviar() {
     xhttp.open("GET", "https://cors-anywhere.herokuapp.com/https://dcc.000webhostapp.com/2019B/horario.php?codigo=" + codigo + "&nip=" + nip, true);
     xhttp.send();
 }
+
+function dias(day) {
+    var promise = new Promise((resolve, reject) => {
+        document.querySelector('#myNavigator').pushPage('page3.html', {
+            data: {
+                title: 'Horario'
+            }
+        }).then(() => {
+            var table = document.getElementById("horario");
+            if (day == 'L') {
+                let subjects = scheduleData.monday;
+                var row = 1;
+                for (i in subjects) {
+                    var new_row = table.insertRow(row);
+                    var cell = 0;
+
+                    for (var key in subjects[i]) {
+                        if (subjects[i].hasOwnProperty(key)) {
+                            var new_cell = new_row.insertCell(cell);
+                            new_cell.innerHTML = subjects[i][key];
+                        }
+                        cell += 0;
+                    }
+                    row += 1;
+                }
+            }
+            if (day == 'M') {
+                let subjects = scheduleData.tuesday;
+                for (i in subjects) {
+                    console.log(subjects[i]);
+                }
+            }
+            if (day == 'I') {
+                let subjects = scheduleData.wednesday;
+                for (i in subjects) {
+                    console.log(subjects[i]);
+                }
+            }
+            if (day == 'J') {
+                let subjects = scheduleData.thursday;
+                for (i in subjects) {
+                    console.log(subjects[i]);
+                }
+            }
+            if (day == 'V') {
+                let subjects = scheduleData.friday;
+                for (i in subjects) {
+                    console.log(subjects[i]);
+                }
+            }
+            if (day == 'S') {
+                let subjects = scheduleData.saturday;
+                for (i in subjects) {
+                    console.log(subjects[i]);
+                }
+            }
+        })
+    });
+}
