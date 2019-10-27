@@ -1,169 +1,524 @@
-  
-<!-- TAREA 3: Programa de un Login que devuelve el horario del alumno en múltiples páginas --->
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
-<head>
+        <!-- 3 líneas necesarias para el uso de OnsenUI --->
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+        <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="style.css"/>
+
+        <title>Estacionamiento CUCEI </title>
+    <body>
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgZb2NLQkbAqGr6NajCrJZkR4oSVsQo9E" type="text/javascript"></script>
+      <script>
+
+      ons.ready(function()
+      {
+
+      if(window.localStorage.length > 0)
+      {
+        var myNavigator = document.getElementById("myNavigator");
+        myNavigator.pushPage("maps.html");
+      }
+      else {
+       console.log("NO hay datos en LOCALSTORAGE");
+
+     }
+
+     });
 
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+      function compruebaDatos(str_placas, str_telefono) // función para comprobar la integridad de los datos capturados
+      {
+        var placas_good = false;
+        var telefono_good = false;
 
-  <!-- 3 líneas necesarias para el uso de OnsenUI --->
-  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
-  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
-  <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
-  <!-- <script type="text/javascript" src="cordova.js"></script> esta línea no la necesitas (todavía)-->
-  <!-- La parte del script que empleas para las peticiones lo cargo de la siguiente direccion en src -->
-  <script type="text/javascript" src="js/index.js"></script>
-  <style>
-    table{
-	
-	  font-family: arial, sans-serif;
-	  border-collapse: collapse;
-	  width: 100%
-	}
-	td,
-	th{
-	 
-	 border: 1px solid #dddddd;
-	 text-align: left;
-	 padding: 8px;
-	
-	
-	
-	}
-	tr:ntd-child(even)
-	{
-	    background-color: #dddddd;
-	}
-  
-  
-  
-  </style>
-  <title>Horario UDG</title>
-  
-  
-  
+        if(str_placas[3] == '-')
+        {
+          var cadena = str_placas.split('-');
+          var p1 = cadena[0];
+          var p2 = cadena[1];
 
-  
-</head>
+          var primera = false;
+          if(isNaN(p1[0]) && isNaN(p1[1]) && isNaN(p1[2]))
+          {
+            primera = true;
+          }
+          var segunda = isNaN(p2);
 
-<body>
+          if((primera) && (!segunda))
+          {
+            placas_good = true;
+          }
+        }
+        // comprobando Teléfono
+        if(!isNaN(str_telefono))
+        {
+          telefono_good = true;
+        }
 
-     
-  <center>
-    <ons-page>
-
-      <ons-navigator swipeable id="myNavigator" page="page1.html"></ons-navigator>
-      <template id="page1.html">
-        <ons-page id="page1">
-          <ons-toolbar>
-            <div class="center">Iniciar sesión</div>
-          </ons-toolbar>
-
-          <center>
-            <h1> Horario UDG <h1>
-                <h2> Ingresa los siguientes datos necesarios para poder entrar </h2>
-
-                <br> <br> <br>
-
-                <ons-input input-id="codigo" type="text" placeholder="Código" modifier="underbar"> </ons-input> <br>
-                <br> <!-- apellidos -->
-                <ons-input input-id="pass" type="password" placeholder="NIP" modifier="underbar"> </ons-input> <br> <br>
-                <!-- nombres -->
-                <br> <br>
-
-                <ons-button id="push-button"> ENVIAR </ons-button>
-          </center>
-
-        </ons-page>
-      </template>
-
-      <template id="page2.html">
-        <ons-page id="page2">
-          <ons-toolbar>
-            <div class="left">
-              <ons-back-button>Iniciar sesión</ons-back-button>
-            </div>
-            <div class="center">Tus datos</div>
-          </ons-toolbar>
-
-          <ons-card modifier="material">
-            <div class="center" style="font-weight: bold; font-size: 28px;">
-              Datos del Alumno
-            </div>
-            <form id="form1" name="form1" style="text-align:left;margin-top:10px; padding: 2px">
-              <!-- Se definen los IDs por los cuales van a ser modificados en el HTML -->
-              <p id="codigoAlumno">
-                Código:
-              </p>
-              <p id="nombreAlumno">
-                Nombre:
-              </p>
-              <p id="carreraAlumno">
-                Carrera:
-              </p>
-              <p id="campusAlumno">
-                Campus:
-              </p>
-              <p>
-                <input onclick="closeSession()" class="login-button button--large button" value="Cerrar Sesión">
-              </p>
-            </form>
-          </ons-card>
-
-          <ons-card modifier="material">
-            <div class="center" style="font-weight: bold; font-size: 28px;">
-              Horario
-            </div>
-            <form id="form2" name="form2" style="text-align:center;margin-top:10px; padding: 2px">
-		
+        console.log(placas_good+" "+telefono_good)
+        if((placas_good) && (telefono_good))
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      };
 
 
 
-              <ons-button onclick="dias('L')" class="login-button button--large button" id="dayButton"> LUNES </ons-button>
-              <ons-button onclick="dias('M')" class="login-button button--large button" id="dayButton"> MARTES </ons-button>
-              <ons-button onclick="dias('I')" class="login-button button--large button" id="dayButton"> MIERCOLES </ons-button>
-              <ons-button onclick="dias('J')" class="login-button button--large button" id="dayButton"> JUEVES </ons-button>
-              <ons-button onclick="dias('v')" class="login-button button--large button" id="dayButton"> VIERNES </ons-button>
-              <ons-button onclick="dias('S')" class="login-button button--large button" id="dayButton"> SABADO </ons-button>
-            </form>
-          </ons-card>
-        </ons-page>
-      </template>
-	  
-	  
-	  <template id="page3.html">
-	  <ons-page id="page3">
-	  
-	  <table id="horario" style="width:100%">
-	  <tr>
-	  <td>Fecha Fin</td>
-      <td>Fecha Incio</td>
-      <td>Profesor</td>
-      <td>Aula</td>
-      <td>Edicio</td>
-      <td>Dias</td>
-      <td>Horario</td>
-      <td>Creditos</td>
-      <td>Seccion</td>
-      <td>Materia</td>
-      <td>Clave</td>
-      <td>CRN</td>
-      </tr>
-      </ons-page>	 
-     
-    </template>	 
-	  
-	  
-	  
-	  
-	  
-	  
-  </center>
-</body>
+      function salir()
+      {
+        window.localStorage.removeItem('nombre');
+        window.localStorage.removeItem('codigo');
+        //window.localStorage.removeItem('nip');
+        window.localStorage.removeItem('placas');
+        window.localStorage.removeItem('telefono');
+        window.localStorage.removeItem('password');
+        localStorage.clear();
+
+        if(window.localStorage.length == 0)
+        {
+          var navegador = document.getElementById("myNavigator");
+          navegador.pushPage("loginpage.html");
+          localStorage.clear();
+
+        }
+        location.reload();
+
+      };
+      </script>
+
+      <ons-page>
+      </head>
+      <body class="welcome">
+    <span id="splash-overlay" class="splash"></span>
+    <span id="welcome" class="z-depth-4"></span>
+    <header>
+      <center>
+
+
+
+        <ons-navigator swipeable id="myNavigator" page="loginpage.html" animation="slide"></ons-navigator>
+
+        <template id="loginpage.html"> <!-- página inicial de la app: login --->
+          <ons-page id="main_page">
+              <div class="center"><b>Estacionamiento CUCEI</b></div>
+            <script>
+
+              function capturaUsuario(data1, data2)
+              {
+                var cc = data1;
+                var cn = data2;
+                var placas = prompt("Ingrese:\n Placas: ", "");
+                var telefono = prompt(" Ingrese Su\n Teléfono: ", "");
+
+                placas = placas.toUpperCase();
+                window.localStorage.setItem('codigo', cc);
+                window.localStorage.setItem('nombre', cn);
+                window.localStorage.setItem('placas', placas);
+                window.localStorage.setItem('telefono', telefono);
+                var captura_correcta = compruebaDatos(placas, telefono);
+                if(captura_correcta)
+                {
+                  var capture_url = "http://cuceimobile.tech/Escuela/altaU.php?codigo="+cc+"&nombre="+cn+"&placas="+placas+"&telefono="+telefono;
+                  var xhttp2 = new XMLHttpRequest;
+                  xhttp2.onreadystatechange = function()
+                  {
+                    console.log(xhttp2.responseText);
+                  };
+                  xhttp2.open("GET", capture_url, true); xhttp2.send();
+                  ons.notification.alert("Captura exitosa!");
+                  map_title = cn;
+                  var navegador = document.getElementById("myNavigator");
+                  navegador.pushPage("maps.html");
+                }
+                else
+                {
+                  ons.notification.alert("Parece haber un problema con tus datos.\n comprobar datos validos de placas."
+                                +"\n TELÉFONO invalido: Solo se aceptan números.");
+                }
+              };
+              function Consulta()
+              {
+                var Consulta;
+
+                var Xhttp = new XMLHttpRequest();
+                Xhttp.onreadystatechange = function()
+                {
+                  if(this.readyState == 4 && this.status == 200)
+                  {
+                    Consulta = this.responseText;
+                    xhttp.open("GET","https://assured-vacuum.000webhostapp.com/conectaBase.php",true);
+                    xhttp.send();
+                    map_title = cn;
+                    var navegador = document.getElementById("myNavigator");
+                    navegador.pushPage("maps.html")
+
+                  }
+                  else{
+                    ons.notification.alert("No existe el alumno en la base de datos");
+                    capturaUsuario();
+
+
+                }
+
+                };
+              }
+
+              // programando el evento "onclick" del botón ENTRAR
+              document.getElementById("LoginBttn").onclick = function()
+              {
+                var existeAlumno = false;
+
+                if(document.getElementById("input_codigo").value == "	" || document.getElementById("input_passwd").value == "")
+                {
+                  ons.notification.alert(" Campos incompletos. Verifica e intenta de nuevo.");
+                }
+                else
+                {
+                  console.log("Iniciando sesión");
+                  var c = document.getElementById("input_codigo").value;
+                  var p = document.getElementById("input_passwd").value;
+
+                  // iniciando el login
+                  var url = "https://dcc.000webhostapp.com/2018/datosudeg.php?codigo="+c+"&nip="+p;
+                  var xhttp = new XMLHttpRequest;
+                  xhttp.onreadystatechange = function()
+                  {
+                    if(this.readyState == 4 && this.status == 200)
+                    {
+
+                      var cadena_respuesta = xhttp.responseText;
+                      var arreglo = [];
+                      arreglo = cadena_respuesta.split(',');
+
+                      if(arreglo.length > 1)
+                      {
+                        existeAlumno = true;
+                        Consulta();
+
+                      }
+
+                      if(!existeAlumno)
+                      {
+                        ons.notification.alert(" Datos incorrectos.");
+                        document.getElementById("input_codigo").value = "";
+                        document.getElementById("input_passwd").value = "";
+                      }
+                      else
+                      {
+                        //ons.notification.alert(" Bienvenido! "+arreglo[2]);
+                        //console.log(" Mostrando popup con entradas para capturar los datos del vehículo . . .");
+                        //window.localStorage.setItem('nip', p);
+                        console.log("arreglos", arreglo[1], arreglo[2])
+                        capturaUsuario(arreglo[1], arreglo[2]);
+                      }
+                    }
+                  };
+                  xhttp.open("GET", url, true); xhttp.send();
+                }
+              };
+
+              // programando el evento "onclick" del botón NUEVO
+              document.getElementById("NuevoBttn").onclick = function()
+              {
+                console.log("Creando usuario visitante . . .");
+
+                var navegador = document.getElementById("myNavigator");
+                navegador.pushPage("nuevoUsuario.html");
+              };
+
+            var showTemplateDialog = function() {
+            var dialog = document.getElementById('my-dialog');
+
+           if (dialog) {
+           dialog.show();
+          } else {
+         ons.createElement('dialog.html', { append: true })
+           .then(function(dialog) {
+        dialog.show();
+      });
+  }
+};
+
+var hideDialog = function(id) {
+  document
+    .getElementById(id)
+    .hide();
+};
+
+
+
+            </script>
+          </head>
+            <body class="welcome">
+          <span id="splash-overlay" class="splash"></span>
+          <span id="welcome" class="z-depth-4"></span>
+
+            <br>
+            <img src="Mercedes_Benz_Logo_11.jpg"  alt="Est" width="150" height="90">
+
+            </p>
+            <ons-input input-id="input_codigo" type="number" placeholder="Código" modifier="underbar"></ons-input> </p>
+            <ons-input input-id="input_passwd" type="password" placeholder="Contraseña" modifier="underbar"></ons-input>
+
+            </p>
+            <ons-button id="LoginBttn" style="background-color: green">Entrar</ons-button>
+
+
+            <ons-button id="NuevoBttn" style="background-color: green"> Nuevo Usuario</ons-button>
+          </ons-page>
+        </template>
+
+        <template id="nuevoUsuario.html"> <!-- página de nuevo usuario/visitante --->
+          <ons-page id="nuevo_page">
+            <ons-toolbar>
+              <div class="center"><b>Registro Nvo Usuario</b></div>
+            </ons-toolbar>
+
+            <script>
+
+            function generaCodigoVisitante()
+            {
+              var numero;
+              var numero_str = "";
+              var cifra=[];
+              for(a=0; a<9; a++)
+              {
+              	cifra[a]=parseInt(Math.random()*10);
+              	if(a==0)
+                {
+              		cifra[a]=parseInt(Math.random()*9)+1;
+              	}
+              	for(aa=0;aa<a;aa++)
+                {
+              		if(cifra[a]==cifra[aa]){a-=1;break}
+              	}
+              }
+              for(a=0;a<9;a++)
+              {
+              	numero_str+=cifra[a];
+              }
+              numero = parseInt(numero_str);
+
+              return numero;
+
+            }
+
+            function capturaVisitante(data1, data2, data3, data4, data5)
+            {
+              var cc = data1;
+              var cn = data2;
+              var placas = data3;
+              var telefono = data4;
+              var pass = data5;
+
+              window.localStorage.setItem('codigo', cc);
+              window.localStorage.setItem('nombre', cn);
+              window.localStorage.setItem('placas',placas);
+              window.localStorage.setItem('telefono',telefono);
+              window.localStorage.setItem('password',pass);
+
+              var capture_url = "http://cuceimobile.tech/Escuela/altaU.php?codigo="+cc+"&nombre="+cn+"&placas="+placas+"&telefono="+telefono+"&password="+pass;
+              var xhttp2 = new XMLHttpRequest;
+              xhttp2.onreadystatechange = function()
+              {
+                console.log(xhttp2.responseText);
+              };
+              xhttp2.open("GET", capture_url, true); xhttp2.send();
+            }
+
+              var numVisitante = generaCodigoVisitante();
+              document.getElementById("label_codigov").innerHTML = numVisitante;
+
+              document.getElementById("AltaVBttn").onclick = function() // función del evento onclick, botón para dar de alta al visitante
+              {
+                if(document.getElementById("input_nombrev").value == "" ||
+                   document.getElementById("input_placasv").value == "" ||
+                   document.getElementById("input_telefonov").value == "" ||
+                   document.getElementById("input_passwdv").value == "")
+                  {
+                    ons.notification.alert(" Campos incompletos, Verifica e intentalo de nuevo.");
+                  }
+                else
+                {
+                  var vc = numVisitante;
+                  var vn = document.getElementById("input_nombrev").value;
+                  var vp = document.getElementById("input_placasv").value ;
+                  var vt = document.getElementById("input_telefonov").value;
+                  var vps = document.getElementById("input_passwdv").value;
+
+
+
+                  vp = vp.toUpperCase(); vn = vn.toUpperCase();
+                  var captura_correcta = compruebaDatos(vp, vt); // comprobando formatos de la placa y teléfono
+                  if(captura_correcta)
+                  {
+                    capturaVisitante(vc, vn, vp, vt, vps);
+                    ons.notification.alert("Captura exitosa!");
+                    map_title = window.localStorage.getItem('nombre');
+                    var navegador = document.getElementById("myNavigator");
+                    navegador.pushPage("maps.html"); // damos de alta y pasamos al maps
+                  }
+                  else
+                  {
+                    window.alert("Parece haber un problema con tus datos.\n comprueba las placas"
+                                  +"\n TELÉFONO invalido: Solo se aceptan números."); // mostramos los formatos correctos para evitar el siguiente error
+                  }
+                }
+              };
+              //en este punto del codigo es donde al validar que ya estan nuestros datos guardados en localStorage nos redireccionara al mapa de google.
+
+
+
+              // programando el evento "onclick" del botón ENTRAR
+              document.getElementById("LoginBttn").onclick = function()
+              {
+                var existeAlumno = false;
+
+                if(document.getElementById("input_codigo").value == "	" || document.getElementById("input_passwd").value == "")
+                {
+                  ons.notification.alert(" Campos incompletos. Verifica e intenta de nuevo.");
+                }
+                else
+                {
+                  console.log("Iniciando sesión . . .");
+                  var c = document.getElementById("input_codigo").value;
+                  var p = document.getElementById("input_passwd").value;
+
+                  // iniciando el login
+                  var url = "https://dcc.000webhostapp.com/2018/datosudeg.php?codigo="+c+"&nip="+p;
+                  var xhttp = new XMLHttpRequest;
+                  xhttp.onreadystatechange = function()
+                  {
+                    if(this.readyState == 4 && this.status == 200)
+                    {
+
+                      var cadena_respuesta = xhttp.responseText;
+                      var arreglo = [];
+                      arreglo = cadena_respuesta.split(',');
+
+                      if(arreglo.length > 1)
+                      {
+                        existeAlumno = true;
+                      }
+
+                      if(!existeAlumno)
+                      {
+                        ons.notification.alert(" Datos incorrectos.");
+                        document.getElementById("input_codigo").value = "";
+                        document.getElementById("input_passwd").value = "";
+                      }
+                      else
+                      {
+                        //ons.notification.alert(" Bienvenido! "+arreglo[2]);
+                        //console.log(" Mostrando popup con entradas para capturar los datos del vehículo . . .");
+                        //window.localStorage.setItem("nip", p);
+                        console.log("arreglos", arreglo[1], arreglo[2])
+                        capturaUsuario(arreglo[1], arreglo[2]);
+                      }
+                    }
+                  };
+                  xhttp.open("GET", url, true); xhttp.send();
+                }
+              };
+
+
+
+
+            </script>
+
+            </p>
+            <b> CÓDIGO: <label id="label_codigov"> </label> </b> </p>
+            <ons-input input-id="input_nombrev" type="responseText" placeholder="Nombre" modifier="underbar"></ons-input> </p>
+            <ons-input input-id="input_placasv" type="text" placeholder="Placas" modifier="underbar"></ons-input> </p>
+            <ons-input input-id="input_telefonov" type="number" placeholder="Teléfono" modifier="underbar"></ons-input> </p>
+            <ons-input input-id="input_passwdv" type="password" placeholder="Contraseña" modifier="underbar"></ons-input> </p>
+
+            <ons-button id="AltaVBttn" style="background-color: green">Registrar nuevo</ons-button>
+          </ons-page>
+        </template>
+
+        <template id="maps.html"> <!-- página de nuevo usuario/visitante --->
+          <ons-page id="map_page">
+            <script>
+            setTimeout(function()
+            {
+
+
+                     var header_map = window.localStorage.getItem('nombre');
+                    map = new google.maps.Map(document.getElementById("map"),
+                    { center: {lat: 20.655036, lng: -103.325131}, zoom: 175 });
+                    document.getElementById("map_label").innerHTML = "<b>"+header_map+"</b>";
+
+
+
+
+
+            },4000);
+
+
+            setTimeout();
+
+            </script>
+            <ons-toolbar>
+              <div id="map_label" class="center"><b></b></div>
+             </ons-toolbar>
+              <ons-button id="pushbutton" onclick="salir()">Salir</ons-button>
+            <style>
+              #map {
+                height: 100%;
+              }
+              html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+              }
+            </style>
+
+            <script>
+               var header_map = window.localStorage.getItem('nombre');
+              map = new google.maps.Map(document.getElementById("map"),
+              { center: {lat: 20.655036, lng: -103.325131}, zoom: 175 });
+              document.getElementById("map_label").innerHTML = "<b>"+header_map+"</b>";
+            </script>
+
+            <div id="map"></div>
+
+          </ons-page>
+        </template>
+<template id="dialog.html">
+  <ons-dialog id="my-dialog">
+    <div style="text-align: center; padding: 10px;">
+      <p>
+      Placas:
+      <ons-input id="placas" type="text" modifier="underbar"></ons-input>
+      <br>
+      <ons-input id="telefono" type="text" modifier="underbar"></ons-imput>
+      <br>
+
+      </p>
+
+      <p>
+        <!---<ons-button onclick="LoginBttn"> Entrar</ons-button>--->
+        <ons-button onclick="hideDialog('my-dialog')">Close</ons-button>
+      </p>
+    </div>
+  </ons-dialog>
+</template>
+
+      </center>
+      </ons-page>
+    </header>
+    </body>
+<!-- <cap -->
 
 </html>
-
-
