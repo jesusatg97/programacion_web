@@ -15,32 +15,6 @@
     <body>
       <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgZb2NLQkbAqGr6NajCrJZkR4oSVsQo9E" type="text/javascript"></script>
       <script>
-      function verificarExistente()
-      {
-            var cc = document.getElementById('codigo').value;
-            var cn = document.getElementById('nombre').value;
-            if(existeAlumno = true)
-            {
-              var my_php = //aqui iria la direccion php donde se hara el select para validar si existe el usuario.
-              
-            }
-            else {
-              capturaUsuario();
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-      }
 
       ons.ready(function()
       {
@@ -98,6 +72,8 @@
         }
       };
 
+
+
       function salir()
       {
         window.localStorage.removeItem('nombre');
@@ -137,7 +113,6 @@
               <div class="center"><b>Estacionamiento CUCEI</b></div>
             <script>
 
-
               function capturaUsuario(data1, data2)
               {
                 var cc = data1;
@@ -150,6 +125,7 @@
                 window.localStorage.setItem('nombre', cn);
                 window.localStorage.setItem('placas', placas);
                 window.localStorage.setItem('telefono', telefono);
+
                 var captura_correcta = compruebaDatos(placas, telefono);
                 if(captura_correcta)
                 {
@@ -171,6 +147,37 @@
                                 +"\n TELÉFONO invalido: Solo se aceptan números.");
                 }
               };
+               function consultar()
+              {
+                var c = document.getElementById("input_codigo");
+                var p = document.getElementById("input_passwd")
+
+                var cadena_respuesta = xhttp.responseText;
+                var arreglo = [];
+
+                if(arreglo.lenght>0)
+                {
+                  var url_base = "https://assured-vacuum.000webhostapp.com/conectaBase.php?codigo="+c+"&password="+p;
+                  var xhttp_consulta = new XMLHttpRequest;
+                  xhttp_consulta.onreadystatechange = function()
+                  {
+                    console.log(xhttp_consulta.responseText);
+                  };
+                  xhttp_consulta.open("GET",url_base, true); xhttp_consulta.send();
+                  ons.notification.alert("Usuario existente en la base de datos");
+                  map_title = cn;
+                  var navegador = document.getElementById("myNavigator");
+                  navegador.pushPage("maps.html");
+
+                }
+                else {
+
+                  ons.notification.alert("el usuario no existe en la base de datos registrado");
+                }
+
+
+              };
+
               // programando el evento "onclick" del botón ENTRAR
               document.getElementById("LoginBttn").onclick = function()
               {
@@ -201,6 +208,7 @@
                       if(arreglo.length > 1)
                       {
                         existeAlumno = true;
+
                       }
 
                       if(!existeAlumno)
@@ -267,7 +275,7 @@ var hideDialog = function(id) {
             <ons-input input-id="input_passwd" type="password" placeholder="Contraseña" modifier="underbar"></ons-input>
 
             </p>
-            <ons-button id="LoginBttn" style="background-color: green">Entrar</ons-button>
+            <ons-button id="LoginBttn" onclick="consultar()";style="background-color: green">Entrar</ons-button>
 
 
             <ons-button id="NuevoBttn" style="background-color: green"> Nuevo Usuario</ons-button>
@@ -420,6 +428,7 @@ var hideDialog = function(id) {
                         //window.localStorage.setItem("nip", p);
                         console.log("arreglos", arreglo[1], arreglo[2])
                         capturaUsuario(arreglo[1], arreglo[2]);
+
                       }
                     }
                   };
