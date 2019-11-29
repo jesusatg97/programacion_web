@@ -1,529 +1,608 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
-        <!-- 3 líneas necesarias para el uso de OnsenUI --->
-        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
-        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
-        <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="style.css"/>
+    <!-- 3 líneas necesarias para el uso de OnsenUI --->
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
 
-        <title>Estacionamiento CUCEI </title>
-    <body>
-      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgZb2NLQkbAqGr6NajCrJZkR4oSVsQo9E" type="text/javascript"></script>
-      <script>
 
-      ons.ready(function()
-      {
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgZb2NLQkbAqGr6NajCrJZkR4oSVsQo9E" type="text/javascript"></script>
+    <link rel="stylesheet" href="style.css"/>
 
-      if(window.localStorage.length > 0)
-      {
-        var myNavigator = document.getElementById("myNavigator");
-        myNavigator.pushPage("maps.html");
+    <title>Estacionamiento CUCEI </title>
+    <script>
+        ons.ready(function() {
+            if(window.localStorage.length > 0)
+            {
+                var myNavigator = document.getElementById("myNavigator");
+                myNavigator.pushPage("maps.html");
+
+            } else {
+                console.log("NO hay datos en LOCALSTORAGE");
+            }
+
+        });
+
+        // función para comprobar la integridad de los datos capturados
+        function compruebaDatos(str_placas, str_telefono) {
+            var placas_good = false;
+            var telefono_good = false;
+
+            if(str_placas[3] == '-')
+            {
+                var cadena = str_placas.split('-');
+                var p1 = cadena[0];
+                var p2 = cadena[1];
+
+                var primera = false;
+                if(isNaN(p1[0]) && isNaN(p1[1]) && isNaN(p1[2]))
+                {
+                    primera = true;
+                }
+                var segunda = isNaN(p2);
+
+                if((primera) && (!segunda))
+                {
+                    placas_good = true;
+                }
+            }
+            // comprobando Teléfono
+            if(!isNaN(str_telefono))
+            {
+            telefono_good = true;
+            }
+
+            console.log(placas_good+" "+telefono_good)
+
+            if((placas_good) && (telefono_good))
+            {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function rightCredentials(input_codigo, input_passwd) {
+    console.log("si esta en esta funcion");
+    return new Promise((resolve, reject) => {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText == 'algo salio mal credenciales') reject()
+        else if (this.responseText === 'datos incorrectos') resolve('0');
+        else if (this.responseText === 'algo salio mal nombre') reject();
+        else resolve(this.responseText);
       }
-      else {
-       console.log("NO hay datos en LOCALSTORAGE");
-
-     }
-
-     });
-
-
-      function compruebaDatos(str_placas, str_telefono) // función para comprobar la integridad de los datos capturados
-      {
-        var placas_good = false;
-        var telefono_good = false;
-
-        if(str_placas[3] == '-')
-        {
-          var cadena = str_placas.split('-');
-          var p1 = cadena[0];
-          var p2 = cadena[1];
-
-          var primera = false;
-          if(isNaN(p1[0]) && isNaN(p1[1]) && isNaN(p1[2]))
-          {
-            primera = true;
-          }
-          var segunda = isNaN(p2);
-
-          if((primera) && (!segunda))
-          {
-            placas_good = true;
-          }
-        }
-        // comprobando Teléfono
-        if(!isNaN(str_telefono))
-        {
-          telefono_good = true;
-        }
-
-        console.log(placas_good+" "+telefono_good)
-        if((placas_good) && (telefono_good))
-        {
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      };
+    }
+    xmlhttp.open("GET", `https://assured-vacuum.000webhostapp.com/credenciales.php?codigo=${codigo}&password=${nip}`, true);
+    xmlhttp.send();
+  })
+}
 
 
+        function validar_base(){
+            var existeAlumno = false;
+            var c = document.getElementById("input_codigo").value;
+            var p = document.getElementById("input_passwd").value;
+            var myNavigator = document.getElementById("myNavigator");
 
-      function salir()
-      {
-        window.localStorage.removeItem('nombre');
-        window.localStorage.removeItem('codigo');
-        //window.localStorage.removeItem('nip');
-        window.localStorage.removeItem('placas');
-        window.localStorage.removeItem('telefono');
-        window.localStorage.removeItem('password');
-        localStorage.clear();
+            if(c == "	" || p == "")
+            {
+                ons.notification.alert("usuario no encontrado En ninguna base favor de registrarse.");
+            } else {
+                console.log("Iniciando sesión-------");
 
-        if(window.localStorage.length == 0)
-        {
-          var navegador = document.getElementById("myNavigator");
-          navegador.pushPage("loginpage.html");
-          localStorage.clear();
+                //Aquí se pone el php
+                var url = "https://assured-vacuum.000webhostapp.com/conectaBase.php?codigo="+c;
+                var xhttp = new XMLHttpRequest;
 
-        }
-        location.reload();
+                xhttp.onreadystatechange = function(){
+                    console.log("hey");
 
-      };
-      </script>
+                    if(this.readyState == 4 && this.status == 200){
+                        var c = true;
+                        var cadena_respuesta = xhttp.responseText;
 
-      <ons-page>
-      </head>
-      <body class="welcome">
+                        //si la cadena es diferente 0 es que si existe
+                        if(cadena_respuesta !== "0" && cadena_respuesta.length > 0)
+                        {
+                            console.log("cad " + cadena_respuesta);
+
+                            var nombre = cadena_respuesta.split(",")[0];
+                            var placas = cadena_respuesta.split(",")[1];
+                            map_title = nombre;
+                            window.localStorage.setItem('nombre',nombre);
+							         window.localStorage.setItem('placas', placas);
+                            console.log("Placas en => LOCALSTORAGE");
+
+
+                            myNavigator.pushPage("maps.html").then(function(){
+                                window.localStorage.setItem('nombre',nombre);
+                            });
+                        } else {
+                            console.log("arre");
+                            console.log("no existe en la base de datos");
+                            datosudeg();            //sino capturar
+                        }
+                    }
+                };
+                //return false;
+                xhttp.open("GET", url, true);
+                xhttp.send();
+            }
+        };
+
+        function salir(){
+            window.localStorage.removeItem('nombre');
+            window.localStorage.removeItem('codigo');
+            //window.localStorage.removeItem('nip');
+            window.localStorage.removeItem('placas');
+            window.localStorage.removeItem('telefono');
+            window.localStorage.removeItem('password');
+            localStorage.clear();
+
+            if(window.localStorage.length == 0)
+            {
+                var navegador = document.getElementById("myNavigator");
+                navegador.pushPage("loginpage.html");
+                localStorage.clear();
+
+            }
+            location.reload();
+        };
+    </script>
+</head>
+<body class="welcome">
+<ons-page>
     <span id="splash-overlay" class="splash"></span>
     <span id="welcome" class="z-depth-4"></span>
-    <header>
-      <center>
+<header>
+        <center>
+            <ons-navigator swipeable id="myNavigator" page="loginpage.html" animation="slide">
+            </ons-navigator>
+        </center>
 
 
-
-        <ons-navigator swipeable id="myNavigator" page="loginpage.html" animation="slide"></ons-navigator>
-
-        <template id="loginpage.html"> <!-- página inicial de la app: login --->
-          <ons-page id="main_page">
-              <div class="center"><b>Estacionamiento CUCEI</b></div>
+    <!-- página inicial de la app: login --->
+    <template id="loginpage.html">
+        <ons-page id="main_page">
             <script>
-
-              function capturaUsuario(data1, data2)
-              {
-                var cc = data1;
-                var cn = data2;
-                var placas = prompt("Ingrese:\n Placas: ", "");
-                var telefono = prompt(" Ingrese Su\n Teléfono: ", "");
-
-                placas = placas.toUpperCase();
-                window.localStorage.setItem('codigo', cc);
-                window.localStorage.setItem('nombre', cn);
-                window.localStorage.setItem('placas', placas);
-                window.localStorage.setItem('telefono', telefono);
-
-                var captura_correcta = compruebaDatos(placas, telefono);
-                if(captura_correcta)
-                {
-                  var capture_url = "http://cuceimobile.tech/Escuela/altaU.php?codigo="+cc+"&nombre="+cn+"&placas="+placas+"&telefono="+telefono;
-                  var xhttp2 = new XMLHttpRequest;
-                  xhttp2.onreadystatechange = function()
-                  {
-                    console.log(xhttp2.responseText);
-                  };
-                  xhttp2.open("GET", capture_url, true); xhttp2.send();
-                  ons.notification.alert("Captura exitosa!");
-                  map_title = cn;
-                  var navegador = document.getElementById("myNavigator");
-                  navegador.pushPage("maps.html");
-                }
-                else
-                {
-                  ons.notification.alert("Parece haber un problema con tus datos.\n comprobar datos validos de placas."
-                                +"\n TELÉFONO invalido: Solo se aceptan números.");
-                }
-              };
-               function consultar()
-              {
-                var c = document.getElementById("input_codigo");
-                var p = document.getElementById("input_passwd")
-
-                var cadena_respuesta = xhttp.responseText;
-                var arreglo = [];
-
-                if(arreglo.lenght>0)
-                {
-                  var url_base = "https://assured-vacuum.000webhostapp.com/conectaBase.php?codigo="+c+"&password="+p;
-                  var xhttp_consulta = new XMLHttpRequest;
-                  xhttp_consulta.onreadystatechange = function()
-                  {
-                    console.log(xhttp_consulta.responseText);
-                  };
-                  xhttp_consulta.open("GET",url_base, true); xhttp_consulta.send();
-                  ons.notification.alert("Usuario existente en la base de datos");
-                  map_title = cn;
-                  var navegador = document.getElementById("myNavigator");
-                  navegador.pushPage("maps.html");
-
-                }
-                else {
-
-                  ons.notification.alert("el usuario no existe en la base de datos registrado");
-                }
+                function capturaUsuario(data1, data2) {
+                    var cc = data1;
+                    var cn = data2;
+                    var placas = prompt("Ingrese:\n Placas: ", "");
+                    var telefono = prompt(" Ingrese Su\n Teléfono: ", "");
 
 
-              };
 
-              // programando el evento "onclick" del botón ENTRAR
-              document.getElementById("LoginBttn").onclick = function()
-              {
-                var existeAlumno = false;
+                    placas = placas.toUpperCase();
+                    window.localStorage.setItem('codigo', cc);
+                    window.localStorage.setItem('nombre', cn);
+                    window.localStorage.setItem('placas', placas);
+                    window.localStorage.setItem('telefono', telefono);
 
-                if(document.getElementById("input_codigo").value == "	" || document.getElementById("input_passwd").value == "")
-                {
-                  ons.notification.alert(" Campos incompletos. Verifica e intenta de nuevo.");
-                }
-                else
-                {
-                  console.log("Iniciando sesión");
-                  var c = document.getElementById("input_codigo").value;
-                  var p = document.getElementById("input_passwd").value;
+                    var captura_correcta = compruebaDatos(placas, telefono);
+                    if(captura_correcta){
+                        var capture_url = "http://cuceimobile.tech/Escuela/altaU.php?codigo="+cc+"&nombre="+cn+"&placas="+placas+"&telefono="+telefono;
+                        var xhttp2 = new XMLHttpRequest;
 
-                  // iniciando el login
-                  var url = "https://dcc.000webhostapp.com/2018/datosudeg.php?codigo="+c+"&nip="+p;
-                  var xhttp = new XMLHttpRequest;
-                  xhttp.onreadystatechange = function()
-                  {
-                    if(this.readyState == 4 && this.status == 200)
-                    {
+                        xhttp2.onreadystatechange = function(){
+                            console.log(xhttp2.responseText);
+                        };
 
-                      var cadena_respuesta = xhttp.responseText;
-                      var arreglo = [];
-                      arreglo = cadena_respuesta.split(',');
+                        xhttp2.open("GET", capture_url, true);
+                        xhttp2.send();
 
-                      if(arreglo.length > 1)
-                      {
-                        existeAlumno = true;
-
-                      }
-
-                      if(!existeAlumno)
-                      {
-                        ons.notification.alert(" Datos incorrectos.");
-                        document.getElementById("input_codigo").value = "";
-                        document.getElementById("input_passwd").value = "";
-                      }
-                      else
-                      {
-                        //ons.notification.alert(" Bienvenido! "+arreglo[2]);
-                        //console.log(" Mostrando popup con entradas para capturar los datos del vehículo . . .");
-                        //window.localStorage.setItem('nip', p);
-                        console.log("arreglos", arreglo[1], arreglo[2])
-                        capturaUsuario(arreglo[1], arreglo[2]);
-                      }
+                        ons.notification.alert("Captura exitosa!");
+                        map_title = cn;
+                        var navegador = document.getElementById("myNavigator");
+                        navegador.pushPage("maps.html");
+                    } else {
+                      ons.notification.alert("Parece haber un problema con tus datos.\n comprobar datos validos de placas."+"\n TELÉFONO invalido: Solo se aceptan números.");
                     }
-                  };
-                  xhttp.open("GET", url, true); xhttp.send();
+
+                };
+
+                document.getElementById("LoginBttn").onclick = function() {
+                    var existeAlumno = false;
+                    var c = document.getElementById("input_codigo").value;
+                    var p = document.getElementById("input_passwd").value;
+
+                    if(c == "	" || p == "") {
+                        ons.notification.alert("usuario no existe o datos incorrectos, favor de registrarse.");
+
+                    } else {
+                        console.log("Iniciando sesión");
+
+                        // iniciando el login
+                        var url = "https://dcc.000webhostapp.com/2018/datosudeg.php?codigo="+c+"&nip="+p;
+                        var xhttp = new XMLHttpRequest;
+
+                        xhttp.onreadystatechange = function() {
+                            if(this.readyState == 4 && this.status == 200) {
+                                var cadena_respuesta = xhttp.responseText;
+                                var arreglo = [];
+                                arreglo = cadena_respuesta.split(',');
+
+                                if(cadena_respuesta != "0"){
+                                    existeAlumno = true;
+                                    console.log("EXISTE....");
+                                    validar_base();
+                                }else{
+
+
+                                    document.getElementById("input_codigo").value = "";
+                                    document.getElementById("input_passwd").value = "";
+                                    validar_base();
+                                    rightCredentials(input_codigo, input_passwd);
+                                    console.log("si esta entradoooooo");
+                                    alert("contraseña incorrecta");
+
+
+
+                                }
+                            }
+                        };
+                        xhttp.open("GET", url, true);
+                        xhttp.send();
+                    }
                 }
-              };
 
-              // programando el evento "onclick" del botón NUEVO
-              document.getElementById("NuevoBttn").onclick = function()
-              {
-                console.log("Creando usuario visitante . . .");
+                document.getElementById("NuevoBttn").onclick = function() {
+                    console.log("Creando usuario visitante . . .");
 
-                var navegador = document.getElementById("myNavigator");
-                navegador.pushPage("nuevoUsuario.html");
-              };
+                    var navegador = document.getElementById("myNavigator");
+                    navegador.pushPage("nuevoUsuario.html");
+                };
 
-            var showTemplateDialog = function() {
-            var dialog = document.getElementById('my-dialog');
+                // programando el evento "onclick" del botón ENTRAR
+                function datosudeg() {
+                    var existeAlumno = false;
+                    var c = document.getElementById("input_codigo").value;
+                    var p = document.getElementById("input_passwd").value;
 
-           if (dialog) {
-           dialog.show();
-          } else {
-         ons.createElement('dialog.html', { append: true })
-           .then(function(dialog) {
-        dialog.show();
-      });
-  }
-};
-
-var hideDialog = function(id) {
-  document
-    .getElementById(id)
-    .hide();
-};
+                    if(c == "	" || p == "") {
 
 
+                        ons.notification.alert("usuario no encontrado favor de registrarse");
+                    } else {
+                        console.log("Iniciando sesión");
+
+
+                        // iniciando el login
+                        var url = "https://dcc.000webhostapp.com/2018/datosudeg.php?codigo="+c+"&nip="+p;
+                        var xhttp = new XMLHttpRequest;
+
+                        xhttp.onreadystatechange = function() {
+                            if(this.readyState == 4 && this.status == 200) {
+                                var cadena_respuesta = xhttp.responseText;
+                                var arreglo = [];
+                                arreglo = cadena_respuesta.split(',');
+
+                                if(arreglo.length > 1){
+                                    existeAlumno = true;
+                                }
+
+                                if(!existeAlumno){
+                                    validar_base();
+
+                                    ons.notification.alert("Datos de udg Erroneos");
+                                    document.getElementById("input_codigo").value = "";
+                                    document.getElementById("input_passwd").value = "";
+                                    alert("contraseña incorrecta");
+                                } else {
+                                    console.log("arreglos", arreglo[1], arreglo[2])
+                                    capturaUsuario(arreglo[1], arreglo[2]);
+                                }
+                            }
+                        };
+                        xhttp.open("GET", url, true);
+                        xhttp.send();
+                    }
+                }
 
             </script>
-          </head>
-            <body class="welcome">
-          <span id="splash-overlay" class="splash"></span>
-          <span id="welcome" class="z-depth-4"></span>
+            <div class="center">
+                <b>Estacionamiento CUCEI</b>
+            </div>
 
             <br>
             <img src="Mercedes_Benz_Logo_11.jpg"  alt="Est" width="150" height="90">
 
+            <p>
+                <ons-input input-id="input_codigo" type="number" placeholder="Código" modifier="underbar"></ons-input>
             </p>
-            <ons-input input-id="input_codigo" type="number" placeholder="Código" modifier="underbar"></ons-input> </p>
-            <ons-input input-id="input_passwd" type="password" placeholder="Contraseña" modifier="underbar"></ons-input>
-
+            <p>
+                <ons-input input-id="input_passwd" type="password" placeholder="Contraseña" modifier="underbar"></ons-input>
             </p>
-            <ons-button id="LoginBttn" onclick="consultar()";style="background-color: green">Entrar</ons-button>
 
-
+            <ons-button id="LoginBttn" style="background-color: green">Entrar</ons-button>
             <ons-button id="NuevoBttn" style="background-color: green"> Nuevo Usuario</ons-button>
-          </ons-page>
-        </template>
+        </ons-page>
+    </template>
 
-        <template id="nuevoUsuario.html"> <!-- página de nuevo usuario/visitante --->
-          <ons-page id="nuevo_page">
-            <ons-toolbar>
-              <div class="center"><b>Registro Nvo Usuario</b></div>
-            </ons-toolbar>
-
+    <!-- página de nuevo usuario/visitante --->
+    <template id="nuevoUsuario.html">
+        <ons-page id="nuevo_page">
             <script>
+                function generaCodigoVisitante(){
+                    var numero;
+                    var numero_str = "";
+                    var cifra=[];
 
-            function generaCodigoVisitante()
-            {
-              var numero;
-              var numero_str = "";
-              var cifra=[];
-              for(a=0; a<9; a++)
-              {
-              	cifra[a]=parseInt(Math.random()*10);
-              	if(a==0)
-                {
-              		cifra[a]=parseInt(Math.random()*9)+1;
-              	}
-              	for(aa=0;aa<a;aa++)
-                {
-              		if(cifra[a]==cifra[aa]){a-=1;break}
-              	}
-              }
-              for(a=0;a<9;a++)
-              {
-              	numero_str+=cifra[a];
-              }
-              numero = parseInt(numero_str);
+                    for(a=0; a<9; a++){
+                         cifra[a]=parseInt(Math.random()*10);
+                         if(a==0) {
+                            cifra[a]=parseInt(Math.random()*9)+1;
+                         }
 
-              return numero;
-
-            }
-
-            function capturaVisitante(data1, data2, data3, data4, data5)
-            {
-              var cc = data1;
-              var cn = data2;
-              var placas = data3;
-              var telefono = data4;
-              var pass = data5;
-
-              window.localStorage.setItem('codigo', cc);
-              window.localStorage.setItem('nombre', cn);
-              window.localStorage.setItem('placas',placas);
-              window.localStorage.setItem('telefono',telefono);
-              window.localStorage.setItem('password',pass);
-
-              var capture_url = "http://cuceimobile.tech/Escuela/altaU.php?codigo="+cc+"&nombre="+cn+"&placas="+placas+"&telefono="+telefono+"&password="+pass;
-              var xhttp2 = new XMLHttpRequest;
-              xhttp2.onreadystatechange = function()
-              {
-                console.log(xhttp2.responseText);
-              };
-              xhttp2.open("GET", capture_url, true); xhttp2.send();
-            }
-
-              var numVisitante = generaCodigoVisitante();
-              document.getElementById("label_codigov").innerHTML = numVisitante;
-
-              document.getElementById("AltaVBttn").onclick = function() // función del evento onclick, botón para dar de alta al visitante
-              {
-                if(document.getElementById("input_nombrev").value == "" ||
-                   document.getElementById("input_placasv").value == "" ||
-                   document.getElementById("input_telefonov").value == "" ||
-                   document.getElementById("input_passwdv").value == "")
-                  {
-                    ons.notification.alert(" Campos incompletos, Verifica e intentalo de nuevo.");
-                  }
-                else
-                {
-                  var vc = numVisitante;
-                  var vn = document.getElementById("input_nombrev").value;
-                  var vp = document.getElementById("input_placasv").value ;
-                  var vt = document.getElementById("input_telefonov").value;
-                  var vps = document.getElementById("input_passwdv").value;
-
-
-
-                  vp = vp.toUpperCase(); vn = vn.toUpperCase();
-                  var captura_correcta = compruebaDatos(vp, vt); // comprobando formatos de la placa y teléfono
-                  if(captura_correcta)
-                  {
-                    capturaVisitante(vc, vn, vp, vt, vps);
-                    ons.notification.alert("Captura exitosa!");
-                    map_title = window.localStorage.getItem('nombre');
-                    var navegador = document.getElementById("myNavigator");
-                    navegador.pushPage("maps.html"); // damos de alta y pasamos al maps
-                  }
-                  else
-                  {
-                    window.alert("Parece haber un problema con tus datos.\n comprueba las placas"
-                                  +"\n TELÉFONO invalido: Solo se aceptan números."); // mostramos los formatos correctos para evitar el siguiente error
-                  }
-                }
-              };
-              //en este punto del codigo es donde al validar que ya estan nuestros datos guardados en localStorage nos redireccionara al mapa de google.
-
-
-
-              // programando el evento "onclick" del botón ENTRAR
-              document.getElementById("LoginBttn").onclick = function()
-              {
-                var existeAlumno = false;
-
-                if(document.getElementById("input_codigo").value == "	" || document.getElementById("input_passwd").value == "")
-                {
-                  ons.notification.alert(" Campos incompletos. Verifica e intenta de nuevo.");
-                }
-                else
-                {
-                  console.log("Iniciando sesión . . .");
-                  var c = document.getElementById("input_codigo").value;
-                  var p = document.getElementById("input_passwd").value;
-
-                  // iniciando el login
-                  var url = "https://dcc.000webhostapp.com/2018/datosudeg.php?codigo="+c+"&nip="+p;
-                  var xhttp = new XMLHttpRequest;
-                  xhttp.onreadystatechange = function()
-                  {
-                    if(this.readyState == 4 && this.status == 200)
-                    {
-
-                      var cadena_respuesta = xhttp.responseText;
-                      var arreglo = [];
-                      arreglo = cadena_respuesta.split(',');
-
-                      if(arreglo.length > 1)
-                      {
-                        existeAlumno = true;
-                      }
-
-                      if(!existeAlumno)
-                      {
-                        ons.notification.alert(" Datos incorrectos.");
-                        document.getElementById("input_codigo").value = "";
-                        document.getElementById("input_passwd").value = "";
-                      }
-                      else
-                      {
-                        //ons.notification.alert(" Bienvenido! "+arreglo[2]);
-                        //console.log(" Mostrando popup con entradas para capturar los datos del vehículo . . .");
-                        //window.localStorage.setItem("nip", p);
-                        console.log("arreglos", arreglo[1], arreglo[2])
-                        capturaUsuario(arreglo[1], arreglo[2]);
-
-                      }
+                         for(aa=0;aa<a;aa++) {
+                            if(cifra[a]==cifra[aa]){a-=1;break}
+                         }
                     }
-                  };
-                  xhttp.open("GET", url, true); xhttp.send();
+                    for(a=0;a<9;a++) {
+                        numero_str+=cifra[a];
+                    }
+                    numero = parseInt(numero_str);
+
+                    return numero;
                 }
-              };
 
+                function capturaVisitante(data1, data2, data3, data4, data5){
+                    var cc = data1;
+                    var cn = data2;
+                    var placas = data3;
+                    var telefono = data4;
+                    var pass = data5;
 
+                    window.localStorage.setItem('codigo', cc);
+                    window.localStorage.setItem('nombre', cn);
+                    window.localStorage.setItem('placas',placas);
+                    window.localStorage.setItem('telefono',telefono);
+                    window.localStorage.setItem('password',pass);
 
+                    var capture_url = "http://cuceimobile.tech/Escuela/altaU.php?codigo="+cc+"&nombre="+cn+"&placas="+placas+"&telefono="+telefono+"&password="+pass;
+                    var xhttp2 = new XMLHttpRequest;
 
+                    xhttp2.onreadystatechange = function(){
+                        console.log(xhttp2.responseText);
+                    };
+                    xhttp2.open("GET", capture_url, true);
+                    xhttp2.send();
+                }
+
+                var numVisitante = generaCodigoVisitante();
+                document.getElementById("label_codigov").innerHTML = numVisitante;
+
+                // función del evento onclick, botón para dar de alta al visitante
+                document.getElementById("AltaVBttn").onclick = function() {
+                    var vn = document.getElementById("input_nombrev").value;
+                    var vp = document.getElementById("input_placasv").value;
+                    var vt = document.getElementById("input_telefonov").value;
+                    var vps = document.getElementById("input_passwdv").value;
+                    var vc = numVisitante;
+
+                    if(vn == "" || vp == "" || vt == "" || vps == "") {
+                        ons.notification.alert(" Campos incompletos, Verifica e intentalo de nuevo.");
+                    } else {
+                        vp = vp.toUpperCase();
+                        vn = vn.toUpperCase();
+                        // comprobando formatos de la placa y teléfono
+                        var captura_correcta = compruebaDatos(vp, vt);
+
+                        if(captura_correcta){
+                            capturaVisitante(vc, vn, vp, vt, vps);
+                            ons.notification.alert("Captura exitosa!");
+                            map_title = window.localStorage.getItem('nombre');
+                            var navegador = document.getElementById("myNavigator");
+                            navegador.pushPage("maps.html"); // damos de alta y pasamos al maps
+                        } else {
+                            // mostramos los formatos correctos para evitar el siguiente error
+                            window.alert("Parece haber un problema con tus datos.\n comprueba las placas"
+                                      +"\n TELÉFONO invalido: Solo se aceptan números.");
+                        }
+                    }
+                };
             </script>
+            <ons-toolbar>
+                <div class="center">
+                    <b>Registro Nuevo Usuario</b>
+                </div>
+            </ons-toolbar>
+			<ons-toolbar>
+                <center>
+			         <ons-button id="pushbutton" onclick="salir()">regresa Login</ons-button>
+			     </center>
+			</ons-toolbar>
 
+            <b> CÓDIGO: <label id="label_codigov"> </label> </b>
+            <p>
+                <ons-input input-id="input_nombrev" type="responseText" placeholder="Nombre" modifier="underbar"></ons-input>
             </p>
-            <b> CÓDIGO: <label id="label_codigov"> </label> </b> </p>
-            <ons-input input-id="input_nombrev" type="responseText" placeholder="Nombre" modifier="underbar"></ons-input> </p>
-            <ons-input input-id="input_placasv" type="text" placeholder="Placas" modifier="underbar"></ons-input> </p>
-            <ons-input input-id="input_telefonov" type="number" placeholder="Teléfono" modifier="underbar"></ons-input> </p>
-            <ons-input input-id="input_passwdv" type="password" placeholder="Contraseña" modifier="underbar"></ons-input> </p>
+            <p>
+                <ons-input input-id="input_placasv" type="text" placeholder="Placas" modifier="underbar"></ons-input>
+            </p>
+            <p>
+                <ons-input input-id="input_telefonov" type="number" placeholder="Teléfono" modifier="underbar"></ons-input>
+            </p>
+            <p>
+                <ons-input input-id="input_passwdv" type="password" placeholder="Contraseña" modifier="underbar"></ons-input>
+            </p>
 
             <ons-button id="AltaVBttn" style="background-color: green">Registrar nuevo</ons-button>
-          </ons-page>
-        </template>
+        </ons-page>
+    </template>
 
-        <template id="maps.html"> <!-- página de nuevo usuario/visitante --->
-          <ons-page id="map_page">
+    <!-- página de nuevo usuario/visitante --->
+    <template id="maps.html">
+        <ons-page id="map_page">
             <script>
-            setTimeout(function()
-            {
+                // onSuccess Callback
+                //   This method accepts a `Position` object, which contains
+                //   the current GPS coordinates
+                //
+                var onSuccess = function(position) {
+                    posicion_usuario = position;
+                    //alert('Latitude: '          + position.coords.latitude          + '\n' +
+                    //      'Longitude: '         + position.coords.longitude         + '\n' +
+                    //      'Altitude: '          + position.coords.altitude          + '\n' +
+                    //      'Accuracy: '          + position.coords.accuracy          + '\n' +
+                    //      'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+                    //      'Heading: '           + position.coords.heading           + '\n' +
+                    //      'Speed: '             + position.coords.speed             + '\n' +
+                    //      'Timestamp: '         + new Date(position.timestamp)      + '\n');
+                };
 
+                // onError Callback receives a PositionError object
+                //
+                function onError(error) {
+                    alert('code: '    + error.code    + '\n' +
+                          'message: ' + error.message + '\n');
+                }
 
-                     var header_map = window.localStorage.getItem('nombre');
-                    map = new google.maps.Map(document.getElementById("map"),
-                    { center: {lat: 20.655036, lng: -103.325131}, zoom: 175 });
-                    document.getElementById("map_label").innerHTML = "<b>"+header_map+"</b>";
+                var posicion_usuario = [];
+                var marker_usuario = 0;
+                var map = 0;
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);
 
+                function Marker() {
+                    var url_mapa = "https://assured-vacuum.000webhostapp.com/lugares.php";
+                    var xhttp3 = new XMLHttpRequest;
 
+                    xhttp3.onreadystatechange = function() {
+                        if(this.readyState == 4 && this.status == 200){
+                            var cadena_respuesta = xhttp3.responseText;
 
+                            //si la cadena es diferente 0 es que si existe
+                            if(cadena_respuesta == "0") {
+                                ons.notification.alert("No existen datos guardados");
+                                console.log("papaya de celaya");
+                            } else {
+                                var header_map = window.localStorage.getItem('nombre');
 
+                                map = new google.maps.Map(document.getElementById("map"),
+                                { center: {lat: 20.655036, lng: -103.325131}, zoom: 20 });
 
-            },4000);
+                                document.getElementById("map_label").innerHTML = "<b>"+header_map+"</b>";
 
+                                arreglo = cadena_respuesta.split('|');
+                                arreglo.forEach(function(data)
+                                {
+                                    markerData = data.split(",");
+                                    const position = { lat: parseFloat(markerData[1]), lng: parseFloat(markerData[2]) };
+                                    var marker = new google.maps.Marker({ position, map, label: markerData[0]})
+                                });
+                            }
+                        }
+                    }
+                    xhttp3.open("GET", url_mapa, true);
+                    xhttp3.send();
+                }
 
-            setTimeout();
+                document.getElementById("cargalugar").onclick = function() {
+                    var placas =  window.localStorage.getItem('placas');
+                    alert("Placas => " + placas);
+                    var lat = posicion_usuario.coords.latitude;
+                    var lon = posicion_usuario.coords.longitude;
 
+                    var url_new = "https://assured-vacuum.000webhostapp.com/nuevoLugar.php?Placas="+placas+"&lat="+lat+"&lon="+lon;
+
+                    console.log(url_new);
+                    var xhttp4 =  new XMLHttpRequest;
+
+                    xhttp4.onreadystatechange = function(){
+                        if(this.readyState == 4 && this.status == 200){
+                            var latitude = xhttp4.responseText;
+                            if(latitude != '0') {
+                                ons.notification.alert("Agregado con exito al mapa...");
+                                const position = { lat: lat, lng: lon };
+                                marker_usuario = new google.maps.Marker({ position, map, label: placas})
+                            } else {
+                                ons.notification.alert("no se encontro ningun dato almacenado");
+                            }
+                        }
+                    }
+                    xhttp4.open("GET", url_new, true);
+                    xhttp4.send();
+                };
+
+                Marker();
+
+                document.getElementById("desocupa").onclick = function()
+                {
+                    var placas =  window.localStorage.getItem('placas');
+                    alert("Placas a eliminar => " + placas);
+                    var url_libre = "https://assured-vacuum.000webhostapp.com/eliminaLugar.php?Placas="+placas;
+
+                    console.log(url_libre);
+                    var xhttp5 = new XMLHttpRequest;
+
+                    xhttp5.onreadystatechange = function(){
+                        if(this.readyState == 4 && this.status == 200){
+                            var  placas = xhttp5.responseText;
+                            if(placas != '0')
+                            {
+                                console.log(marker_usuario);
+                                marker_usuario.setMap(null);
+                                ons.notification.alert("se retiro el lugar del mapa");
+                            } else {
+                                ons.notificacion.alert("error al eliminar de la base");
+                            }
+                        }
+                    }
+                    xhttp5.open("GET", url_libre, true);
+                    xhttp5.send();
+                };
+
+                Marker();
             </script>
-            <ons-toolbar>
-              <div id="map_label" class="center"><b></b></div>
-             </ons-toolbar>
-              <ons-button id="pushbutton" onclick="salir()">Salir</ons-button>
             <style>
-              #map {
-                height: 100%;
-              }
-              html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-              }
+                #map {
+                    height: 100%;
+                }
+                html, body {
+                    height: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
             </style>
-
-            <script>
-               var header_map = window.localStorage.getItem('nombre');
-              map = new google.maps.Map(document.getElementById("map"),
-              { center: {lat: 20.655036, lng: -103.325131}, zoom: 175 });
-              document.getElementById("map_label").innerHTML = "<b>"+header_map+"</b>";
-            </script>
-
+            <ons-toolbar>
+                <div id="map_label" class="center"><b></b>
+                </div>
+            </ons-toolbar>
+            <center>
+            <ons-button id="cargalugar">Agregar Lugar</ons-button>
+            <ons-button id="desocupa">Desocupar</ons-button>
+            <ons-button id="salir" onclick="salir()">Salir</ons-button>
+          </center>
             <div id="map"></div>
 
-          </ons-page>
-        </template>
-<template id="dialog.html">
-  <ons-dialog id="my-dialog">
-    <div style="text-align: center; padding: 10px;">
-      <p>
-      Placas:
-      <ons-input id="placas" type="text" modifier="underbar"></ons-input>
-      <br>
-      <ons-input id="telefono" type="text" modifier="underbar"></ons-imput>
-      <br>
+        </ons-page>
+    </template>
 
-      </p>
+    <template id="dialog.html">
+        <ons-dialog id="my-dialog">
+            <div style="text-align: center; padding: 10px;">
+                <p>Placas:
+                    <ons-input id="placas" type="text" modifier="underbar"></ons-input>
+                    <br>
+                </p>
+                <p>
+                    <ons-input id="telefono" type="text" modifier="underbar"></ons-input>
+                    <br>
+                </p>
 
-      <p>
-        <!---<ons-button onclick="LoginBttn"> Entrar</ons-button>--->
-        <ons-button onclick="hideDialog('my-dialog')">Close</ons-button>
-      </p>
-    </div>
-  </ons-dialog>
-</template>
-
-      </center>
-      </ons-page>
-    </header>
-    </body>
-<!-- <cap -->
-
+                <p>
+                    <!---<ons-button onclick="LoginBttn"> Entrar</ons-button>--->
+                    <ons-button onclick="hideDialog('my-dialog')">Close</ons-button>
+                </p>
+            </div>
+        </ons-dialog>
+    </template>
+</header>
+</ons-page>
+</body>
 </html>
